@@ -20,54 +20,70 @@
           </div>
   </header>
   <main>
-    <div class="grid">
-      <section>
+    <div id="cards-grid" class="grid">
+      <section id="users-card" class="card">
         <header>
           <h3>Users-API</h3>
+          <span class="status" id="users-status">idle</span>
         </header>
-        <div>
+        <div id="users-body">
           <!-- This is the body of the API response, where the API response will be displayed -->
         </div>
         <footer>
-          <button>Load the API</button>
-          <button>Cancel the Call</button>
+          <button id="users-load">Load the API</button>
+          <button id="users-cancel">Cancel the Call</button>
         </footer>
+        <div class="spinner">
+        <div class="ring"></div>
+        </div>
       </section>
-      <section>
+      <section id="photos-card" class="card">
         <header>
           <h3>Photos-API</h3>
+          <span class="status" id="photos-status">idle</span>
         </header>
-        <div>
+        <div id="photos-body">
           <!-- This is the body of the API response, where the API response will be displayed -->
         </div>
         <footer>
-          <button>Load the API</button>
-          <button>Cancel the Call</button>
+          <button id="photos-load">Load the API</button>
+          <button id="photos-cancel">Cancel the Call</button>
         </footer>
+        <div class="spinner">
+        <div class="ring"></div>
+        </div>
       </section>
-      <section>
+      <section id="weather-card" class="card">
         <header>
-          <h3>Whether-API</h3>
+          <h3>Weather-API</h3>
+          <span class="status" id="weather-status">idle</span>
         </header>
-        <div>
+        <div id="weather-body">
           <!-- This is the body of the API response, where the API response will be displayed -->
         </div>
         <footer>
-          <button>Load the API</button>
-          <button>Cancel the Call</button>
+          <button id="weather-load">Load the API</button>
+          <button id="weather-cancel">Cancel the Call</button>
         </footer>
+        <div class="spinner">
+        <div class="ring"></div>
+        </div>
       </section>
-      <section>
+      <section id="advice-card" class="card">
         <header>
           <h3>Advice-API</h3>
+          <span class="status" id="advice-status">idle</span>
         </header>
-        <div>
+        <div id="advice-body">
           <!-- This is the body of the API response, where the API response will be displayed -->
         </div>
         <footer>
-          <button>Load the API</button>
-          <button>Cancel the Call</button>
+          <button id="advice-load">Load the API</button>
+          <button id="advice-cancel">Cancel the Call</button>
         </footer>
+        <div class="spinner">
+        <div class="ring"></div>
+        </div>
       </section>
 
     </div>
