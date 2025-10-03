@@ -286,3 +286,10 @@ btnLoadAll.onclick = function(){
   weatherLoad.click();
   adviceLoad.click();
 }
+
+btnCancelAll.onclick = function() {
+  userCancel.click();
+  photosCancel.click();
+  weatherCancel.click();
+  adviceCancel.click();
+}
