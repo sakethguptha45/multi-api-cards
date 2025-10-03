@@ -1,5 +1,4 @@
 // Declaring the variables here: 
-
 // starting with the global controls
 const btnLoadAll = document.getElementById('btn-load-all');
 const btnCancelAll = document.getElementById('btn-cancel-all');
@@ -278,4 +277,12 @@ adviceCancel.onclick = function() {
   setLoading(adviceCard, false);
   setStatus(adviceStatus, "idle");
   adviceBody.textContent = 'Canceled.'
+}
+
+// //wiring the loadAll button
+btnLoadAll.onclick = function(){
+  userLoad.click();
+  photosLoad.click();
+  weatherLoad.click();
+  adviceLoad.click();
 }
