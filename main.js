@@ -90,7 +90,6 @@ btnLoadAll.onclick = function () {
 }
 
 // onClick button for the cancel the API load
-
 btnCancelAll.onclick = function () {
   setLoading(usersCard, false);
   setStatus(usersStatus, 'idle');
@@ -110,7 +109,6 @@ btnCancelAll.onclick = function () {
 }
 
 // User card onclick function - seperate function
-
 userLoad.onclick = async function(){
   setLoading(usersCard, true);
   setStatus(usersStatus, 'loading…');
@@ -138,12 +136,52 @@ userLoad.onclick = async function(){
 
 
 //Usercancel Button
-
 userCancel.onclick = function () {
   setLoading(usersCard, false);
   setStatus(usersStatus, 'idle');
   usersBody.textContent = 'Canceled.';
 };
+
+//Building the buttons for the photos API
+photosLoad.onclick = async function(){
+  setLoading(photosCard, true);
+  setStatus(photosStatus, 'loading…');
+  photosBody.textContent = 'Loading…';  
+
+  try {
+    const res = await fetch('https://picsum.photos/v2/list?page=1&limit=8');
+    if (!res.ok) { 
+      throw new Error(`HTTP ${res.status}`);
+    }
+    const data = await res.json();
+    if (chkSlow.checked) await sleep(700); 
+
+
+    photosBody.textContent = '';
+    const frag = document.createDocumentFragment();
+    for (const p of data.slice(0, 8)) {
+    const img = document.createElement('img');
+    img.src = `https://picsum.photos/id/${p.id}/200/120`; 
+    img.alt = `photo ${p.id}`;
+    img.loading = 'lazy';
+    frag.appendChild(img);
+}
+photosBody.appendChild(frag);
+
+    setStatus(photosStatus, 'ok');
+  } catch (err) {
+    setStatus(photosStatus, 'error');
+    photosBody.textContent = `Error: ${err.message || err}`;
+  } finally {
+    setLoading(photosCard, false);
+  }
+};
+
+photosCancel.onclick = async function(){
+  setLoading(photosCard, false);
+  setStatus(photosStatus, 'idle');
+  photosBody.textContent = 'Canceled.';
+}
 
 
 
