@@ -183,12 +183,99 @@ photosCancel.onclick = async function(){
   photosBody.textContent = 'Canceled.';
 }
 
+// weather API
+// User card onclick function - seperate function
+weatherLoad.onclick = async function(){
+  setLoading(weatherCard, true);
+  setStatus(weatherStatus, 'loading…');
+  weatherBody.textContent = 'Loading…';  
+
+  // getting the lat and long 
+  const lat = parseFloat(latInput.value)
+  const lng = parseFloat(lngInput.value)
+
+  //validating the input values
+  const latOk = Number.isFinite(lat) && lat >= -90 && lat <= 90
+  const lngOk = Number.isFinite(lng) && lng >= -180 && lng <= 180
+
+  // Checking for the values of coordinates
+  if (!latOk || !lngOk){
+    setLoading(weatherCard, false);
+    setStatus(weatherStatus, 'error')
+    weatherBody.textContent = 'Enter latitude -90..90 and longitude -180..180';
+    return 
+  }
+
+  // creating the url from the values
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current_weather=true`
+
+  try {
+    const res = await fetch(url);
+    if (!res.ok) { 
+      throw new Error(`HTTP ${res.status}`);
+    }
+    const data = await res.json();
+    if (chkSlow.checked) await sleep(700); 
+    
+
+   const temp = data?.current_weather?.temperature;
+   const wind = data?.current_weather?.windspeed;
+
+  if (Number.isFinite(temp)) {
+  weatherBody.textContent = (wind != null)
+    ? `Now: ${temp} °C, wind ${wind} km/h`
+    : `Now: ${temp} °C`;
+  setStatus(weatherStatus, 'ok');
+  } else {
+  weatherBody.textContent = 'No weather data.';
+  setStatus(weatherStatus, 'error');
+  }
+}catch(err){
+  setStatus(weatherStatus, 'error');
+  weatherBody.textContent = `Error: ${err.message || err}`;
+} finally{
+  setLoading(weatherCard, false);
+}
 
 
+//Weather Cancel Button
+weatherCancel.onclick =  function () {
+  setLoading(weatherCard, false);
+  setStatus(weatherStatus, 'idle');
+  weatherBody.textContent = 'Canceled.';
+};
+}
 
 
+//onclick functions for the advice API
+adviceLoad.onclick = async function () {
+  setLoading(adviceCard, true);
+  setStatus(adviceStatus, 'loading…');
+  adviceBody.textContent = 'Loading…';
+
+  try {
+    // cache-buster so you don't get the same advice repeatedly
+    const res = await fetch(`https://api.adviceslip.com/advice?t=${Date.now()}`, { cache: 'no-store' });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+    const data = await res.json();
+    if (chkSlow.checked) await sleep(700);
+
+    const text = data?.slip?.advice ?? 'No advice right now.';
+    adviceBody.textContent = `“${text}”`;
+    setStatus(adviceStatus, 'ok');
+
+  } catch (err) {
+    setStatus(adviceStatus, 'error');
+    adviceBody.textContent = `Error: ${err.message || err}`;
+  } finally {
+    setLoading(adviceCard, false);
+  }
+};
 
 
-
-
-
+adviceCancel.onclick = function() {
+  setLoading(adviceCard, false);
+  setStatus(adviceStatus, "idle");
+  adviceBody.textContent = 'Canceled.'
+}
