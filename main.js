@@ -1,172 +1,156 @@
-// ========= Quick Start =========
-// 1) Install VS Code extension "Live Server".
-// 2) Right-click index.html → "Open with Live Server".
-// 3) Click "Load All". Toggle "Slow" and try "Cancel".
+// Declaring the variables here: 
 
-// ========= Utilities =========
-const sleep = (ms) => new Promise(res => setTimeout(res, ms));
+// starting with the global controls
+const btnLoadAll = document.getElementById('btn-load-all');
+const btnCancelAll = document.getElementById('btn-cancel-all');
+const chkSlow = document.getElementById('chk-slow');
+const latInput = document.getElementById('lat');
+const lngInput = document.getElementById('lng');
 
-async function retry(fn, { tries = 3, baseMs = 400 } = {}) {
-  let lastErr;
-  for (let i = 0; i < tries; i++) {
-    try { return await fn(); }
-    catch (err) {
-      lastErr = err;
-      if (i < tries - 1) await sleep(baseMs * Math.pow(2, i));
-    }
-  }
-  throw lastErr;
+// All the card  variables
+
+const usersCard = document.getElementById('users-card');
+const photosCard = document.getElementById('photos-card');
+const weatherCard = document.getElementById('weather-card');
+const adviceCard = document.getElementById('advice-card');
+
+//All the section statuses
+
+const usersStatus = document.getElementById('users-status');
+const photosStatus = document.getElementById('photos-status');
+const weatherStatus = document.getElementById('weather-status');
+const adviceStatus = document.getElementById('advice-status');
+
+// All the body Sections
+
+const usersBody = document.getElementById('users-body');
+const photosBody = document.getElementById('photos-body');
+const weatherBody = document.getElementById('weather-body');
+const adviceBody = document.getElementById('advice-body');
+
+
+// Users Buttons
+
+const userLoad = document.getElementById('users-load');
+const userCancel = document.getElementById('users-cancel');
+
+// Photos Buttons
+const photosLoad = document.getElementById('photos-load');
+const photosCancel = document.getElementById('photos-cancel');
+
+// Weather Buttons
+const weatherLoad = document.getElementById('weather-load');
+const weatherCancel = document.getElementById('weather-cancel');
+
+// Advice buttons
+const adviceLoad = document.getElementById('advice-load');
+const adviceCancel = document.getElementById('advice-cancel');
+
+// Initilizing the timer for the everything
+const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+
+
+// --- UI helpers ---
+// Toggle a card's "loading" state (we'll style .loading later)
+
+function setLoading(cardEl, on) {
+  cardEl.classList.toggle('loading', !!on);
 }
 
-function withTimeout(promise, ms, controllerForAbort) {
-  let t;
-  const timeout = new Promise((_, rej) => {
-    t = setTimeout(() => {
-      try { controllerForAbort?.abort(); } catch {}
-      rej(new Error(`Timeout after ${ms}ms`));
-    }, ms);
-  });
-  return Promise.race([promise, timeout]).finally(() => clearTimeout(t));
+// Update the little status text in a card header
+function setStatus(statusEl, text) {
+  statusEl.textContent = text;
 }
 
-async function fetchJSON(url, { signal, timeoutMs = 10000, slow = false } = {}) {
-  // If caller didn’t pass a signal, create our own
-  const internalController = signal ? null : new AbortController();
-  const ctrl = { signal: signal ?? internalController.signal };
+// Onclick Handler- when the user clicks on the buttons we will handle the setloading and setstatus functions
 
-  const p = fetch(url, ctrl).then(r => {
-    if (!r.ok) throw new Error(`HTTP ${r.status} for ${url}`);
-    return r.json();
-  });
+btnLoadAll.onclick = function () {
+  const slow = chkSlow.checked
+  const lat = parseFloat(latInput.value);       // number (can be 0)
+  const lng = parseFloat(lngInput.value); 
+  console.log({ slow, lat, lng });
 
-  const maybeSlow = slow ? p.then(async x => (await sleep(600), x)) : p;
-  return withTimeout(maybeSlow, timeoutMs, internalController);
+  setLoading(usersCard, true);
+  setStatus(usersStatus, 'loading…');
+  usersBody.textContent = 'Loading…';
+
+  setLoading(photosCard, true);
+  setStatus(photosStatus, 'loading…');
+  photosBody.textContent = 'Loading…';
+
+  setLoading(weatherCard, true);
+  setStatus(weatherStatus, 'loading…');
+  weatherBody.textContent = 'Loading…';
+
+  setLoading(adviceCard, true);
+  setStatus(adviceStatus, 'loading…');
+  adviceBody.textContent = 'Loading…';
+  
+  
 }
 
-// ========= DOM helpers =========
-function setLoading(cardId, loading) {
-  const el = document.getElementById(cardId);
-  if (el) el.classList.toggle('loading', !!loading);
-}
-function setStatus(id, text, kind = 'muted') {
-  const el = document.getElementById(id);
-  if (!el) return;
-  el.textContent = text;
-  el.className = `pill ${kind}`;
+// onClick button for the cancel the API load
+
+btnCancelAll.onclick = function () {
+  setLoading(usersCard, false);
+  setStatus(usersStatus, 'idle');
+  usersBody.textContent = 'Canceled';
+
+  setLoading(photosCard, false);
+  setStatus(photosStatus, 'idle');
+  photosBody.textContent = 'Canceled';
+
+  setLoading(weatherCard, false);
+  setStatus(weatherStatus, 'idle');
+  weatherBody.textContent = 'Canceled';
+
+  setLoading(adviceCard, false);
+  setStatus(adviceStatus, 'idle');
+  adviceBody.textContent = 'Canceled';
 }
 
-// ========= API calls =========
-async function getUsers(signal, slow) {
-  return fetchJSON('https://jsonplaceholder.typicode.com/users', { signal, slow });
-}
-async function getPhotos(signal, slow) {
-  return fetchJSON('https://picsum.photos/v2/list?page=1&limit=8', { signal, slow });
-}
-async function getWeather(lat, lng, signal, slow) {
-  // Works with Open-Meteo. We’ll handle both possible shapes in render.
-  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current_weather=true`;
-  return fetchJSON(url, { signal, slow });
-}
-async function getAdvice(signal, slow) {
-  return retry(() => fetchJSON('https://api.adviceslip.com/advice', { signal, slow }), { tries: 2, baseMs: 300 });
-}
+// User card onclick function - seperate function
 
-// ========= Renderers =========
-function renderUsers(data) {
-  const body = document.getElementById('users-body');
-  const names = data.slice(0, 5).map(u => u.name);
-  body.innerHTML = `<div><strong>Top 5:</strong><br>${names.map(n => `• ${n}`).join('<br>')}</div>`;
-}
-
-function renderPhotos(list) {
-  const body = document.getElementById('photos-body');
-  const thumbs = list.map(p => `<img alt="photo ${p.id}" src="${p.download_url}" loading="lazy">`).join('');
-  body.innerHTML = `<div class="thumbs">${thumbs}</div>`;
-}
-
-function renderWeather(obj) {
-  const body = document.getElementById('weather-body');
-  // Old shape: obj.current_weather.temperature; New shape (some endpoints): obj.current.temperature_2m
-  const c = obj?.current_weather?.temperature ?? obj?.current?.temperature_2m;
-  const w = obj?.current_weather?.windspeed ?? obj?.current?.wind_speed_10m;
-  body.innerHTML = (c != null)
-    ? `<div><strong>Now:</strong> ${c} °C${w != null ? `, wind ${w}` : ''}</div>`
-    : `<div class="muted">No weather data.</div>`;
-}
-
-function renderAdvice(obj) {
-  const body = document.getElementById('advice-body');
-  const text = obj?.slip?.advice ?? 'No advice right now.';
-  body.innerHTML = `<div>“${text}”</div>`;
-}
-
-// ========= Orchestration =========
-let activeController = null;
-
-async function loadAll() {
-  const slow = document.getElementById('slow').checked;
-  const lat = parseFloat(document.getElementById('lat').value) || 28.54;
-  const lng = parseFloat(document.getElementById('lng').value) || -81.38;
-
-  // Cancel any previous run
-  if (activeController) { try { activeController.abort(); } catch {} }
-  activeController = new AbortController();
-
-  // UI → loading states
-  setLoading('users-card', true);   setStatus('users-status', 'loading…');
-  setLoading('photos-card', true);  setStatus('photos-status', 'loading…');
-  setLoading('weather-card', true); setStatus('weather-status', 'loading…');
-  setLoading('advice-card', true);  setStatus('advice-status', 'loading…');
+userLoad.onclick = async function(){
+  setLoading(usersCard, true);
+  setStatus(usersStatus, 'loading…');
+  usersBody.textContent = 'Loading…';  
 
   try {
-    const results = await Promise.allSettled([
-      getUsers(activeController.signal, slow),
-      getPhotos(activeController.signal, slow),
-      getWeather(lat, lng, activeController.signal, slow),
-      getAdvice(activeController.signal, slow),
-    ]);
-
-    // Users
-    {
-      const res = results[0];
-      if (res.status === 'fulfilled') { renderUsers(res.value); setStatus('users-status', 'ok', 'ok'); }
-      else { document.getElementById('users-body').innerHTML = `<div class="err small">Error: ${res.reason.message || res.reason}</div>`; setStatus('users-status', 'error', 'err'); }
-      setLoading('users-card', false);
+    const res = await fetch('https://jsonplaceholder.typicode.com/users');
+    if (!res.ok) { 
+      throw new Error(`HTTP ${res.status}`);
     }
+    const data = await res.json();
+    if (chkSlow.checked) await sleep(700); 
+    const names = data.slice(0, 5).map(u => u.name).join('\n');
 
-    // Photos
-    {
-      const res = results[1];
-      if (res.status === 'fulfilled') { renderPhotos(res.value); setStatus('photos-status', 'ok', 'ok'); }
-      else { document.getElementById('photos-body').innerHTML = `<div class="err small">Error: ${res.reason.message || res.reason}</div>`; setStatus('photos-status', 'error', 'err'); }
-      setLoading('photos-card', false);
-    }
+    usersBody.textContent = names;
 
-    // Weather
-    {
-      const res = results[2];
-      if (res.status === 'fulfilled') { renderWeather(res.value); setStatus('weather-status', 'ok', 'ok'); }
-      else { document.getElementById('weather-body').innerHTML = `<div class="err small">Error: ${res.reason.message || res.reason}</div>`; setStatus('weather-status', 'error', 'err'); }
-      setLoading('weather-card', false);
-    }
-
-    // Advice
-    {
-      const res = results[3];
-      if (res.status === 'fulfilled') { renderAdvice(res.value); setStatus('advice-status', 'ok', 'ok'); }
-      else { document.getElementById('advice-body').innerHTML = `<div class="err small">Error: ${res.reason.message || res.reason}</div>`; setStatus('advice-status', 'error', 'err'); }
-      setLoading('advice-card', false);
-    }
+    setStatus(usersStatus, 'ok');
+  } catch (err) {
+    setStatus(usersStatus, 'error');
+    usersBody.textContent = `Error: ${err.message || err}`;
   } finally {
-    // Keep controller reference so Cancel works until next Load
+    setLoading(usersCard, false);
   }
-}
+};
 
-// ========= Wiring =========
-document.getElementById('btn-load').addEventListener('click', loadAll);
-document.getElementById('btn-cancel').addEventListener('click', () => {
-  if (activeController) { try { activeController.abort(); } catch {} }
-});
 
-// Auto-run on first open
-loadAll();
+//Usercancel Button
+
+userCancel.onclick = function () {
+  setLoading(usersCard, false);
+  setStatus(usersStatus, 'idle');
+  usersBody.textContent = 'Canceled.';
+};
+
+
+
+
+
+
+
+
+
+
