@@ -5,6 +5,8 @@ const btnCancelAll = document.getElementById('btn-cancel-all');
 const chkSlow = document.getElementById('chk-slow');
 const latInput = document.getElementById('lat');
 const lngInput = document.getElementById('lng');
+let usersController = null;
+
 
 // All the card  variables
 
@@ -123,39 +125,58 @@ btnCancelAll.onclick = function () {
 }
 
 // User card onclick function - seperate function
-userLoad.onclick = async function(){
-  setLoading(usersCard, true);
-  setStatus(usersStatus, 'loading…');
-  usersBody.textContent = 'Loading…';  
-  console.log('Users-API')
+userLoad.onclick = async function () {
+  // Abort any previous Users request, then create a fresh controller
+if (usersController) { try { usersController.abort(); } catch {} }
+usersController = new AbortController();
 
-  try {
-    const res = await fetch('https://jsonplaceholder.typicode.com/users');
-    if (!res.ok) { 
-      throw new Error(`HTTP ${res.status}`);
-    }
-    const data = await res.json();
-    if (chkSlow.checked) await sleep(700); 
-    const names = data.slice(0, 5).map(u => u.name).join('\n');
+// 🔑 capture a local reference for this run
+const ctrl = usersController;
 
-    usersBody.textContent = names;
+try {
+  const res = await fetch('https://jsonplaceholder.typicode.com/users', {
+    signal: ctrl.signal            // use the local reference
+  });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
-    setStatus(usersStatus, 'ok');
-  } catch (err) {
+  const data = await res.json();
+
+  if (chkSlow.checked) await sleep(700);
+
+  // 🔑 if user canceled during the slow wait, treat as aborted
+  if (ctrl.signal.aborted) {
+    throw new DOMException('Aborted', 'AbortError');
+  }
+
+  const names = data.slice(0, 5).map(u => u.name).join('\n');
+  usersBody.textContent = names;
+  setStatus(usersStatus, 'ok');
+
+} catch (err) {
+  if (err.name === 'AbortError') {
+    usersBody.textContent = 'Canceled.';
+    setStatus(usersStatus, 'idle');
+  } else {
     setStatus(usersStatus, 'error');
     usersBody.textContent = `Error: ${err.message || err}`;
-  } finally {
-    setLoading(usersCard, false);
   }
+} finally {
+  setLoading(usersCard, false);
+  // 🔑 only clear if this was the active controller
+  if (usersController === ctrl) usersController = null;
+}
+
 };
 
 
 //Usercancel Button
 userCancel.onclick = function () {
+  if (usersController) { try { usersController.abort(); } catch {} }
   setLoading(usersCard, false);
   setStatus(usersStatus, 'idle');
   usersBody.textContent = 'Canceled.';
 };
+
 
 //Building the buttons for the photos API
 photosLoad.onclick = async function(){
