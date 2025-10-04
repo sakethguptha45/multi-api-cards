@@ -12,6 +12,8 @@ const usersCard = document.getElementById('users-card');
 const photosCard = document.getElementById('photos-card');
 const weatherCard = document.getElementById('weather-card');
 const adviceCard = document.getElementById('advice-card');
+const jokesCard = document.getElementById('jokes-card'); // It is null
+const catsCard = document.getElementById('cats-card');
 
 //All the section statuses
 
@@ -19,6 +21,8 @@ const usersStatus = document.getElementById('users-status');
 const photosStatus = document.getElementById('photos-status');
 const weatherStatus = document.getElementById('weather-status');
 const adviceStatus = document.getElementById('advice-status');
+const jokesStatus = document.getElementById('jokes-status');
+const catsStatus = document.getElementById('cats-status');
 
 // All the body Sections
 
@@ -26,6 +30,8 @@ const usersBody = document.getElementById('users-body');
 const photosBody = document.getElementById('photos-body');
 const weatherBody = document.getElementById('weather-body');
 const adviceBody = document.getElementById('advice-body');
+const jokesBody = document.getElementById('jokes-body');
+const catsBody = document.getElementById('cats-body');
 
 
 // Users Buttons
@@ -44,6 +50,15 @@ const weatherCancel = document.getElementById('weather-cancel');
 // Advice buttons
 const adviceLoad = document.getElementById('advice-load');
 const adviceCancel = document.getElementById('advice-cancel');
+
+// Jokes buttons
+const jokesLoad = document.getElementById('jokes-load');
+const jokesCancel = document.getElementById('jokes-cancel');
+
+// Cats API
+const catsLoad = document.getElementById('cats-load');
+const catsCancel = document.getElementById('cats-cancel');
+
 
 // Initilizing the timer for the everything
 const sleep = (ms) => new Promise(r => setTimeout(r, ms));
@@ -112,6 +127,7 @@ userLoad.onclick = async function(){
   setLoading(usersCard, true);
   setStatus(usersStatus, 'loading…');
   usersBody.textContent = 'Loading…';  
+  console.log('Users-API')
 
   try {
     const res = await fetch('https://jsonplaceholder.typicode.com/users');
@@ -279,12 +295,87 @@ adviceCancel.onclick = function() {
   adviceBody.textContent = 'Canceled.'
 }
 
-// //wiring the loadAll button
+//New API onclick calls ---
+
+jokesLoad.onclick = async function() {
+  setLoading(jokesCard, true);
+  setStatus(jokesStatus, 'loading…');
+  jokesBody.textContent = 'Loading…';
+  console.log('jokes: clicked');
+
+    try {
+    // cache-buster so you don't get the same advice repeatedly
+    const res = await fetch('https://icanhazdadjoke.com/', { headers: { 'Accept': 'application/json' }, cache: 'no-store'});
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+    const data = await res.json();
+    if (chkSlow.checked) await sleep(700);
+
+    const text = data.joke;
+    jokesBody.textContent = `“${text}”`;
+    setStatus(jokesStatus, 'ok');
+
+    } catch (err) {
+      setStatus(jokesStatus, 'error');
+      jokesBody.textContent = `Error: ${err.message || err}`;
+    } finally {
+      setLoading(jokesCard, false);
+    }
+}
+
+jokesCancel.onclick = function() {
+  setLoading(jokesCard, false);
+  setStatus(jokesStatus, 'idle');
+  jokesBody.textContent = 'Canceled';
+}
+
+// cats Advice
+catsLoad.onclick = async function() {
+  setLoading(catsCard, true);
+  setStatus(catsStatus, 'loading…');
+  catsBody.textContent = 'Loading…';
+  console.log('cats: clicked');
+
+  
+
+    try {
+    // cache-buster so you don't get the same advice repeatedly
+    const res = await fetch('https://catfact.ninja/fact');
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+    const data = await res.json();
+    if (chkSlow.checked) await sleep(700);
+
+    const text = data.fact;
+    catsBody.textContent = `“${text}”`;
+    setStatus(catsStatus, 'ok');
+
+    } catch (err) {
+      setStatus(catsStatus, 'error');
+      catsBody.textContent = `Error: ${err.message || err}`;
+    } finally {
+      setLoading(catsCard, false);
+    }
+}
+
+catsCancel.onclick = function() {
+  setLoading(catsCard, false);
+  setStatus(catsStatus, 'idle');
+  catsBody.textContent = 'Canceled';
+}
+
+
+
+
+
+//wiring the loadAll button
 btnLoadAll.onclick = function(){
   userLoad.click();
   photosLoad.click();
   weatherLoad.click();
   adviceLoad.click();
+  jokesLoad.click();
+  catsLoad.click();
 }
 
 btnCancelAll.onclick = function() {
@@ -292,4 +383,6 @@ btnCancelAll.onclick = function() {
   photosCancel.click();
   weatherCancel.click();
   adviceCancel.click();
+  jokesCancel.click();
+  catsCancel.click();
 }
