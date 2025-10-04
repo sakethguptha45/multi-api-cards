@@ -4,82 +4,83 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Multi-API Cards — Async/Await Practice</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
   <link rel="stylesheet" href="./style.css" />
   <script defer src="./main.js"></script>
 </head>
 <body>
-  <header>
+  <header class="bg-body-tertiary border-bottom">
     <h2>Multi-API Accessing <span>Lets have the fun with the API's</span></h2>
-            <div class="controls">
-            <button id="btn-load-all">Load All</button>
-            <button id="btn-cancel-all">Cancel All</button>
-            <label for="chk-slow">Slow?</label>
-            <input type="checkbox" id="chk-slow" name="option" value="value1">
-            <input type="number" id="lat" name="lat" value="85.0" min="-90" max="90" step="0.01">
-            <input type="number" id="lng" name="lng" value="85.0" min="-180" max="180" step="0.01">
+            <div class="controls" class="controls container py-3 d-flex align-items-center justify-content-between flex-wrap gap-2">
+            <button class="btn btn-primary" id="btn-load-all">Load All</button>
+            <button class="btn btn-outline-danger" id="btn-cancel-all">Cancel All</button>
+            <label for="chk-slow" class="form-check-label">Slow?</label>
+            <input type="checkbox" id="chk-slow" name="option" value="value1" class="form-check-input">
+            <input type="number" id="lat" name="lat" value="85.0" min="-90" max="90" step="0.01" class="form-control form-control-sm w-auto d-inline-block">
+            <input type="number" id="lng" name="lng" value="85.0" min="-180" max="180" step="0.01" class="form-control form-control-sm w-auto d-inline-block">
           </div>
   </header>
   <main>
-    <div id="cards-grid" class="grid">
-      <section id="users-card" class="card">
+    <div id="cards-grid" class="grid container my-4 row g-3">
+      <section id="users-card" class="card card-body">
         <header>
           <h3>Users-API</h3>
-          <span class="status" id="users-status">idle</span>
+          <span class="status badge text-bg-secondary" id="users-status">idle</span>
         </header>
         <div id="users-body">
           <!-- This is the body of the API response, where the API response will be displayed -->
         </div>
         <footer>
-          <button id="users-load">Load the API</button>
-          <button id="users-cancel">Cancel the Call</button>
+          <button id="users-load" class="btn btn-sm btn-secondary me-2">Load the API</button>
+          <button id="users-cancel" class="btn btn-sm btn-outline-danger">Cancel the Call</button>
         </footer>
         <div class="spinner">
         <div class="ring"></div>
         </div>
       </section>
-      <section id="photos-card" class="card">
+      <section id="photos-card" class="card card-body">
         <header>
           <h3>Photos-API</h3>
-          <span class="status" id="photos-status">idle</span>
+          <span class="status badge text-bg-secondary" id="photos-status">idle</span>
         </header>
         <div id="photos-body">
           <!-- This is the body of the API response, where the API response will be displayed -->
         </div>
         <footer>
-          <button id="photos-load">Load the API</button>
-          <button id="photos-cancel">Cancel the Call</button>
+          <button id="photos-load" class="btn btn-sm btn-secondary me-2">Load the API</button>
+          <button id="photos-cancel" class="btn btn-sm btn-outline-danger">Cancel the Call</button>
         </footer>
         <div class="spinner">
         <div class="ring"></div>
         </div>
       </section>
-      <section id="weather-card" class="card">
+      <section id="weather-card" class="card card-body">
         <header>
           <h3>Weather-API</h3>
-          <span class="status" id="weather-status">idle</span>
+          <span class="status badge text-bg-secondary" id="weather-status">idle</span>
         </header>
         <div id="weather-body">
           <!-- This is the body of the API response, where the API response will be displayed -->
         </div>
         <footer>
-          <button id="weather-load">Load the API</button>
-          <button id="weather-cancel">Cancel the Call</button>
+          <button id="weather-load" class="btn btn-sm btn-secondary me-2">Load the API</button>
+          <button id="weather-cancel" class="btn btn-sm btn-outline-danger">Cancel the Call</button>
         </footer>
         <div class="spinner">
         <div class="ring"></div>
         </div>
       </section>
-      <section id="advice-card" class="card">
+      <section id="advice-card" class="card card-body">
         <header>
           <h3>Advice-API</h3>
-          <span class="status" id="advice-status">idle</span>
+          <span class="status badge text-bg-secondary" id="advice-status">idle</span>
         </header>
         <div id="advice-body">
           <!-- This is the body of the API response, where the API response will be displayed -->
         </div>
         <footer>
-          <button id="advice-load">Load the API</button>
-          <button id="advice-cancel">Cancel the Call</button>
+          <button id="advice-load" class="btn btn-sm btn-secondary me-2">Load the API</button>
+          <button id="advice-cancel" class="btn btn-sm btn-outline-danger">Cancel the Call</button>
         </footer>
         <div class="spinner">
         <div class="ring"></div>
@@ -88,33 +89,33 @@
 
       <!-- Adding two new API's to the dashboard -->
 
-      <section class="card" id="jokes-card">
+      <section class="card card-body" id="jokes-card">
         <header>
           <h3>Jokes-API</h3>
-          <span class="status" id="jokes-status">idle</span>
+          <span class="status badge text-bg-secondary" id="jokes-status">idle</span>
         </header>
         <div id="jokes-body">
           <!-- This is the body of the API response, where the API response will be displayed -->
         </div>
         <footer>
-          <button id="jokes-load">Load the API</button>
-          <button id="jokes-cancel">Cancel the Call</button>
+          <button id="jokes-load" class="btn btn-sm btn-secondary me-2">Load the API</button>
+          <button id="jokes-cancel" class="btn btn-sm btn-outline-danger">Cancel the Call</button>
         </footer>
         <div class="spinner">
         <div class="ring"></div>
         </div>
       </section>
-      <section class="card" id="cats-card">
+      <section class="card card-body">
         <header>
           <h3>Cats-API</h3>
-          <span class="status" id="cats-status">idle</span>
+          <span class="status badge text-bg-secondary" id="cats-status">idle</span>
         </header>
         <div id="cats-body">
           <!-- This is the body of the API response, where the API response will be displayed -->
         </div>
         <footer>
-          <button id="cats-load">Load the API</button>
-          <button id="cats-cancel">Cancel the Call</button>
+          <button id="cats-load" class="btn btn-sm btn-secondary me-2">Load the API</button>
+          <button id="cats-cancel" class="btn btn-sm btn-outline-danger">Cancel the Call</button>
         </footer>
         <div class="spinner">
         <div class="ring"></div>
