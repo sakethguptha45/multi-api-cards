@@ -9,8 +9,8 @@
   <script defer src="./main.js"></script>
 </head>
 <body>
-  <header class="bg-body-tertiary border-bottom">
-    <h2>Multi-API Accessing <span>Lets have the fun with the API's</span></h2>
+  <nav class="navbar bg-primary" data-bs-theme="dark">
+    <h2>Fun with the API's</h2>
             <div class="controls" class="controls container py-3 d-flex align-items-center justify-content-between flex-wrap gap-2">
             <button class="btn btn-primary" id="btn-load-all">Load All</button>
             <button class="btn btn-outline-danger" id="btn-cancel-all">Cancel All</button>
@@ -19,7 +19,7 @@
             <input type="number" id="lat" name="lat" value="85.0" min="-90" max="90" step="0.01" class="form-control form-control-sm w-auto d-inline-block">
             <input type="number" id="lng" name="lng" value="85.0" min="-180" max="180" step="0.01" class="form-control form-control-sm w-auto d-inline-block">
           </div>
-  </header>
+  </nav>
   <main>
     <div id="cards-grid" class="grid container my-4 row g-3">
       <section id="users-card" class="card card-body">
