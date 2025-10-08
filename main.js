@@ -407,3 +407,5 @@ btnCancelAll.onclick = function() {
   jokesCancel.click();
   catsCancel.click();
 }
+
+// need to work on this tomorrow. 
