@@ -14,8 +14,9 @@ const usersCard = document.getElementById('users-card');
 const photosCard = document.getElementById('photos-card');
 const weatherCard = document.getElementById('weather-card');
 const adviceCard = document.getElementById('advice-card');
-const jokesCard = document.getElementById('jokes-card'); // It is null
+const jokesCard = document.getElementById('jokes-card'); 
 const catsCard = document.getElementById('cats-card');
+const unsplashPhotoCard = document.getElementById('unsplashphoto-card');
 
 //All the section statuses
 
@@ -25,6 +26,8 @@ const weatherStatus = document.getElementById('weather-status');
 const adviceStatus = document.getElementById('advice-status');
 const jokesStatus = document.getElementById('jokes-status');
 const catsStatus = document.getElementById('cats-status');
+const unsplashPhotoStatus = document.getElementById('unsplashphoto-status');
+
 
 // All the body Sections
 
@@ -34,6 +37,7 @@ const weatherBody = document.getElementById('weather-body');
 const adviceBody = document.getElementById('advice-body');
 const jokesBody = document.getElementById('jokes-body');
 const catsBody = document.getElementById('cats-body');
+const unsplashphotoBody = document.getElementById('unsplashphoto-body');
 
 
 // Users Buttons
@@ -60,6 +64,13 @@ const jokesCancel = document.getElementById('jokes-cancel');
 // Cats API
 const catsLoad = document.getElementById('cats-load');
 const catsCancel = document.getElementById('cats-cancel');
+
+//const unsplash photo api buttons
+
+const unsplashPhotoLoad = document.getElementById('unsplashphoto-load');
+const unsplashPhotoCancel = document.getElementById('unsplashphoto-cancel');
+
+
 
 
 // Initilizing the timer for the everything
@@ -385,7 +396,38 @@ catsCancel.onclick = function() {
   catsBody.textContent = 'Canceled';
 }
 
+// Getting the random picture from the unsplash API
+unsplashPhotoLoad.onclick = async function() {
+  setLoading(unsplashPhotoCard, true);
+  setStatus(unsplashPhotoStatus, 'loading…');
+  unsplashphotoBody.textContent = 'Loading…';
+  console.log('unsplashphoto: clicked');
 
+    try {
+    // cache-buster so you don't get the same advice repeatedly
+    const res = await fetch('https://api.unsplash.com/photos/random?client_id=0L6HhXK6N5iml12DrTpkNY-OR4jjvgIpak6YeRokZUY');
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+    const data = await res.json();
+    if (chkSlow.checked) await sleep(700);
+
+    const text = data.urls.raw;
+    unsplashphotoBody.textContent = `“${text}”`;
+    setStatus(unsplashPhotoStatus, 'ok');
+
+    } catch (err) {
+      setStatus(unsplashPhotoStatus, 'error');
+      unsplashphotoBody.textContent = `Error: ${err.message || err}`;
+    } finally {
+      setLoading(unsplashPhotoCard, false);
+    }
+}
+
+unsplashPhotoCancel.onclick = function() {
+  setLoading(unsplashPhotoCard, false);
+  setStatus(unsplashPhotoStatus, 'idle');
+  unsplashphotoBody.textContent = 'Canceled';
+}
 
 
 
