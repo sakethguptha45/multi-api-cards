@@ -17,6 +17,7 @@ const adviceCard = document.getElementById('advice-card');
 const jokesCard = document.getElementById('jokes-card'); 
 const catsCard = document.getElementById('cats-card');
 const unsplashPhotoCard = document.getElementById('unsplashphoto-card');
+const photosListCard = document.getElementById('photoslist-card')
 
 //All the section statuses
 
@@ -27,6 +28,9 @@ const adviceStatus = document.getElementById('advice-status');
 const jokesStatus = document.getElementById('jokes-status');
 const catsStatus = document.getElementById('cats-status');
 const unsplashPhotoStatus = document.getElementById('unsplashphoto-status');
+const photoslistStatus = document.getElementById('photoslist-status')
+
+
 
 
 // All the body Sections
@@ -38,6 +42,8 @@ const adviceBody = document.getElementById('advice-body');
 const jokesBody = document.getElementById('jokes-body');
 const catsBody = document.getElementById('cats-body');
 const unsplashphotoBody = document.getElementById('unsplashphoto-body');
+const photoslistBody = document.getElementById('photoslist-body')
+
 
 
 // Users Buttons
@@ -69,6 +75,11 @@ const catsCancel = document.getElementById('cats-cancel');
 
 const unsplashPhotoLoad = document.getElementById('unsplashphoto-load');
 const unsplashPhotoCancel = document.getElementById('unsplashphoto-cancel');
+
+// const list of photo api buttons
+
+const photosListLoad = document.getElementById('photoslist-load');
+const photosListCancel = document.getElementById('photoslist-cancel'); 
 
 
 
