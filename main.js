@@ -411,8 +411,18 @@ unsplashPhotoLoad.onclick = async function() {
     const data = await res.json();
     if (chkSlow.checked) await sleep(700);
 
-    const text = data.urls.raw;
-    unsplashphotoBody.textContent = `“${text}”`;
+    const imageUrl = data.urls.raw;
+    const img = document.createElement('img');
+    img.src = imageUrl;
+    img.alt = 'Random photo from Unsplash';
+    img.style.maxWidth = '80%';
+    img.style.height = '80%';
+    unsplashphotoBody.innerHTML = '';
+    unsplashphotoBody.appendChild(img);
+    unsplashphotoBody.style.display = 'flex';
+    unsplashphotoBody.style.justifyContent = 'center';
+    unsplashphotoBody.style.alignItems = 'center';
+    unsplashphotoBody.style.minHeight = 'auto';
     setStatus(unsplashPhotoStatus, 'ok');
 
     } catch (err) {
@@ -439,6 +449,7 @@ btnLoadAll.onclick = function(){
   adviceLoad.click();
   jokesLoad.click();
   catsLoad.click();
+  unsplashPhotoLoad.click();
 }
 
 btnCancelAll.onclick = function() {
@@ -448,6 +459,7 @@ btnCancelAll.onclick = function() {
   adviceCancel.click();
   jokesCancel.click();
   catsCancel.click();
+  unsplashPhotoCancel.click();
 }
 
 // need to work on this tomorrow. 
