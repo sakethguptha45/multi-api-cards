@@ -17,7 +17,7 @@ const adviceCard = document.getElementById('advice-card');
 const jokesCard = document.getElementById('jokes-card'); 
 const catsCard = document.getElementById('cats-card');
 const unsplashPhotoCard = document.getElementById('unsplashphoto-card');
-const photosListCard = document.getElementById('photoslist-card')
+const photosListCard = document.getElementById('photoslist-card');
 
 //All the section statuses
 
@@ -28,9 +28,7 @@ const adviceStatus = document.getElementById('advice-status');
 const jokesStatus = document.getElementById('jokes-status');
 const catsStatus = document.getElementById('cats-status');
 const unsplashPhotoStatus = document.getElementById('unsplashphoto-status');
-const photoslistStatus = document.getElementById('photoslist-status')
-
-
+const photoslistStatus = document.getElementById('photoslist-status');
 
 
 // All the body Sections
@@ -42,7 +40,7 @@ const adviceBody = document.getElementById('advice-body');
 const jokesBody = document.getElementById('jokes-body');
 const catsBody = document.getElementById('cats-body');
 const unsplashphotoBody = document.getElementById('unsplashphoto-body');
-const photoslistBody = document.getElementById('photoslist-body')
+const photoslistBody = document.getElementById('photoslist-body');
 
 
 
@@ -450,6 +448,80 @@ unsplashPhotoCancel.onclick = function() {
   unsplashphotoBody.textContent = 'Canceled';
 }
 
+// Photos List API - Opens images in new page
+photosListLoad.onclick = async function() {
+  setLoading(photosListCard, true);
+  setStatus(photoslistStatus, 'loading…');
+  photoslistBody.textContent = 'Loading…';
+  console.log('photoslist: clicked');
+
+  try {
+    // Fetch multiple photos from Unsplash
+    const res = await fetch('https://api.unsplash.com/photos/random?count=20&client_id=0L6HhXK6N5iml12DrTpkNY-OR4jjvgIpak6YeRokZUY');
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+    const data = await res.json();
+    if (chkSlow.checked) await sleep(1500);
+
+    // Clear the body and create clickable thumbnails
+    photoslistBody.innerHTML = '';
+    const frag = document.createDocumentFragment();
+    
+    for (const photo of data) {
+      // Create a container for each photo
+      const photoContainer = document.createElement('div');
+      photoContainer.style.display = 'inline-block';
+      photoContainer.style.margin = '5px';
+      photoContainer.style.cursor = 'pointer';
+      
+      // Create thumbnail image
+      const img = document.createElement('img');
+      img.src = photo.urls.thumb; // Use thumbnail for better performance
+      img.alt = photo.description || 'Photo from Unsplash';
+      img.style.width = '100px';
+      img.style.height = '100px';
+      img.style.objectFit = 'cover';
+      img.style.borderRadius = '5px';
+      img.style.border = '2px solid #ddd';
+      
+      // Add click event to open full image in new page
+      img.onclick = function() {
+        window.open(photo.urls.full, '_blank');
+      };
+      
+      // Add hover effect
+      img.onmouseover = function() {
+        img.style.border = '2px solid #007bff';
+        img.style.transform = 'scale(1.05)';
+        img.style.transition = 'all 0.2s ease';
+      };
+      
+      img.onmouseout = function() {
+        img.style.border = '2px solid #ddd';
+        img.style.transform = 'scale(1)';
+      };
+      
+      photoContainer.appendChild(img);
+      frag.appendChild(photoContainer);
+    }
+    
+    photoslistBody.appendChild(frag);
+    setStatus(photoslistStatus, 'ok');
+
+  } catch (err) {
+    setStatus(photoslistStatus, 'error');
+    photoslistBody.textContent = `Error: ${err.message || err}`;
+  } finally {
+    setLoading(photosListCard, false);
+  }
+}
+
+photosListCancel.onclick = function() {
+  setLoading(photosListCard, false);
+  setStatus(photoslistStatus, 'idle');
+  photoslistBody.textContent = 'Canceled';
+}
+
 
 
 //wiring the loadAll button
@@ -461,6 +533,7 @@ btnLoadAll.onclick = function(){
   jokesLoad.click();
   catsLoad.click();
   unsplashPhotoLoad.click();
+  photosListLoad.click();
 }
 
 btnCancelAll.onclick = function() {
@@ -471,6 +544,7 @@ btnCancelAll.onclick = function() {
   jokesCancel.click();
   catsCancel.click();
   unsplashPhotoCancel.click();
+  photosListCancel.click();
 }
 
 // need to work on this tomorrow. 
